@@ -58,8 +58,9 @@ class UsersController extends Controller
     public function show(int $id)
     {
         $user = $this->user->find($id);
-        if (!$user)
+        if (!$user) {
             return response()->json(['message' =>'User not found.'], 404);
+        }
 
         return response()->json($user);
     }
@@ -74,16 +75,18 @@ class UsersController extends Controller
     public function update(UpdateUserRequest $request, int $id)
     {
         $user = $this->user->find($id);
-        if (!$user)
+        if (!$user) {
             return response()->json(['message' =>'User not found.'], 404);
+        }
 
         $data = $request->only(['name', 'email', 'password']);
         $data['password'] = $request->input('password') || null;
 
-        if (!$data['password'])
+        if (!$data['password']) {
             unset($data['password']);
-        else
+        } else {
             $data['password'] = bcrypt($data['password']);
+        }
 
         $user->update($data);
 
@@ -99,12 +102,14 @@ class UsersController extends Controller
     public function destroy(int $id)
     {
         $user = $this->user->find($id);
-        if (!$user)
+        if (!$user) {
             return response()->json(['message' =>'User not found.'], 404);
+        }
 
-        if ($user->delete())
+        if ($user->delete()) {
             return response()->json(['message' =>'User deleted.']);
-            else
+        }
+
         return response()->json(['message' =>'Error while deleting.']);
     }
 }
