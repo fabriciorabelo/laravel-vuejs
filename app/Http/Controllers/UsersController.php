@@ -26,29 +26,6 @@ class UsersController extends Controller
      *     operationId="Get users",
      *     description="Return a paginated list of users.",
      *     path="/api/users",
-     *     @OA\Parameter(
-     *         name="page",
-     *         in="query",
-     *         required=false,
-     *         description="Number of the current page.",
-     *         @OA\Schema(
-     *             type="integer",
-     *             default=1,
-     *             minimum=1
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="per_page",
-     *         in="query",
-     *         required=false,
-     *         description="Number of the records to display.",
-     *         @OA\Schema(
-     *             type="integer",
-     *             default=25,
-     *             minimum=1,
-     *             maximum=100
-     *         )
-     *     ),
      *     @OA\Response(
      *      response="400",
      *      description="Bad request"
@@ -60,7 +37,8 @@ class UsersController extends Controller
      *     @OA\Response(
      *      response="200",
      *      description="Ok",
-     *      @OA\JsonContent(ref="#/components/schemas/user")
+     *      @OA\JsonContent(
+     *          @OA\Items(ref="#/components/schemas/user"))
      *     ),
      * )
      */
