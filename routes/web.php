@@ -16,8 +16,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/swagger-ui', [APIController::class, 'swagger'])
     ->name('swagger');
-Route::get('/redoc', [APIController::class, 'redoc'])
-    ->name('redoc-ui');
+Route::get('/redoc-ui', [APIController::class, 'redoc'])
+    ->name('redoc');
 Route::get('/swagger.json', [APIController::class, 'json'])
     ->name('swagger.json');
 

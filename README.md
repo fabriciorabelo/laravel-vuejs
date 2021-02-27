@@ -41,3 +41,13 @@ Run the Laravel server:
 ```bash
 php artisan serve
 ```
+
+## Documentation
+
+After start artisan server you can found the documentation at:
+
+[http://localhost:8000/swagger-ui](http://localhost:8000/swagger-ui)
+
+or
+
+[http://localhost:8000/redoc-ui](http://localhost:8000/redoc-ui)
