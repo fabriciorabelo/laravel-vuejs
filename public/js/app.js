@@ -1856,67 +1856,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
 //
 //
 //
 //
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  data: function data() {
-    return {
-      token: this.$jwt.getToken()
-    };
-  },
-  methods: {
-    logout: function logout() {
-      var _this = this;
-
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                _context.next = 2;
-                return _this.axios.post("http://localhost:8000/api/auth/logout", {}, {
-                  headers: {
-                    Authorization: "Bearer ".concat(_this.token)
-                  }
-                }).then(function (res) {
-                  localStorage.removeItem("token");
-                  localStorage.removeItem("user");
-
-                  _this.$router.push("/login");
-                })["catch"](function (error) {
-                  if (error.response.data.message) {
-                    alert(error.response.data.message);
-                  } else {
-                    alert(error.message);
-                  }
-                });
-
-              case 2:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee);
-      }))();
-    },
-    expiredToken: function expiredToken() {
-      // you will get a true / false response
-      // true  -> if the token is already expired
-      // false -> if the token is not expired
-      return this.$jwt.isExpired(this.token);
-    }
-  }
-});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
 
 /***/ }),
 
@@ -2011,7 +1955,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           switch (_context.prev = _context.next) {
             case 0:
               _context.next = 2;
-              return _this.axios.get("http://localhost:8000/api/users", {
+              return _this.axios.get("users", {
                 headers: {
                   Authorization: "Bearer ".concat(_this.token)
                 }
@@ -2060,7 +2004,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 }
 
                 _context2.next = 3;
-                return _this2.axios["delete"]("http://localhost:8000/api/users/".concat(id), {
+                return _this2.axios["delete"]("users/".concat(id), {
                   headers: {
                     Authorization: "Bearer ".concat(_this2.token)
                   }
@@ -2183,7 +2127,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return _this.axios.post("http://localhost:8000/api/users", _this.user, {
+                return _this.axios.post("users", _this.user, {
                   headers: {
                     Authorization: "Bearer ".concat(_this.token)
                   }
@@ -2315,7 +2259,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           switch (_context.prev = _context.next) {
             case 0:
               _context.next = 2;
-              return _this.axios.get("http://localhost:8000/api/users/".concat(_this.$route.params.id), {
+              return _this.axios.get("users/".concat(_this.$route.params.id), {
                 headers: {
                   Authorization: "Bearer ".concat(_this.token)
                 }
@@ -2347,7 +2291,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context2.prev = _context2.next) {
               case 0:
                 _context2.next = 2;
-                return _this2.axios.put("http://localhost:8000/api/users/".concat(_this2.$route.params.id), _this2.user, {
+                return _this2.axios.put("users/".concat(_this2.$route.params.id), _this2.user, {
                   headers: {
                     Authorization: "Bearer ".concat(_this2.token)
                   }
@@ -2477,7 +2421,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return _this.axios.post("http://localhost:8000/api/auth/login", {
+                return _this.axios.post("auth/login", {
                   email: _this.user.email.trim().toLowerCase(),
                   password: _this.user.password.trim()
                 }).then(function (res) {
@@ -2607,7 +2551,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return _this.axios.post("http://localhost:8000/api/auth/logout", {}, {
+                return _this.axios.post("auth/logout", {}, {
                   headers: {
                     Authorization: "Bearer ".concat(_this.token)
                   }
@@ -2757,7 +2701,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 3:
                 _context.next = 5;
-                return _this.axios.post("http://localhost:8000/api/auth/register", {
+                return _this.axios.post("auth/register", {
                   name: _this.user.email.trim(),
                   email: _this.user.email.trim().toLowerCase(),
                   password: _this.user.password.trim(),
@@ -2898,7 +2842,8 @@ try {
 
 
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+window.axios.defaults.baseURL = window.location.protocol + "//" + window.location.host + "/api/";
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting

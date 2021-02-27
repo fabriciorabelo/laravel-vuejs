@@ -53,7 +53,7 @@ export default {
     methods: {
         async addUser() {
             await this.axios
-                .post("http://localhost:8000/api/users", this.user, {
+                .post("users", this.user, {
                     headers: {
                         Authorization: `Bearer ${this.token}`
                     }

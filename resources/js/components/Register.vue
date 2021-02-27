@@ -77,7 +77,7 @@ export default {
             }
 
             await this.axios
-                .post("http://localhost:8000/api/auth/register", {
+                .post("auth/register", {
                     name: this.user.email.trim(),
                     email: this.user.email.trim().toLowerCase(),
                     password: this.user.password.trim(),

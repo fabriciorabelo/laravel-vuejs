@@ -52,7 +52,7 @@ export default {
     },
     async created() {
         await this.axios
-            .get("http://localhost:8000/api/users", {
+            .get("users", {
                 headers: {
                     Authorization: `Bearer ${this.token}`
                 }
@@ -80,7 +80,7 @@ export default {
         async deleteUser(id) {
             if (confirm("Are you sure?")) {
                 await this.axios
-                    .delete(`http://localhost:8000/api/users/${id}`, {
+                    .delete(`users/${id}`, {
                         headers: {
                             Authorization: `Bearer ${this.token}`
                         }

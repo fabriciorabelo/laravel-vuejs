@@ -50,7 +50,7 @@ export default {
     methods: {
         async login() {
             await this.axios
-                .post("http://localhost:8000/api/auth/login", {
+                .post("auth/login", {
                     email: this.user.email.trim().toLowerCase(),
                     password: this.user.password.trim()
                 })

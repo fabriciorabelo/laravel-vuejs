@@ -48,7 +48,7 @@ export default {
         async logout() {
             await this.axios
                 .post(
-                    `http://localhost:8000/api/auth/logout`,
+                    `auth/logout`,
                     {},
                     {
                         headers: {

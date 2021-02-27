@@ -52,7 +52,7 @@ export default {
     },
     async created() {
         await this.axios
-            .get(`http://localhost:8000/api/users/${this.$route.params.id}`, {
+            .get(`users/${this.$route.params.id}`, {
                 headers: {
                     Authorization: `Bearer ${this.token}`
                 }
@@ -71,15 +71,11 @@ export default {
     methods: {
         async updateUser() {
             await this.axios
-                .put(
-                    `http://localhost:8000/api/users/${this.$route.params.id}`,
-                    this.user,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${this.token}`
-                        }
+                .put(`users/${this.$route.params.id}`, this.user, {
+                    headers: {
+                        Authorization: `Bearer ${this.token}`
                     }
-                )
+                })
                 .then(res => {
                     this.$router.push({ name: "home" });
                 })
