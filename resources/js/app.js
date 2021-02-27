@@ -13,6 +13,7 @@ import axios from "axios";
 import router from "./routes";
 import Vue from "vue";
 import VueEasyJwt from "vue-easy-jwt";
+import NavMenu from "./components/NavMenu.vue";
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -23,11 +24,13 @@ import VueEasyJwt from "vue-easy-jwt";
 Vue.use(VueRouter);
 Vue.use(VueAxios, axios);
 Vue.use(VueEasyJwt, {
-    getToken: () => localStorage.getItem("token"),
+    getToken: () => localStorage.getItem("token")
 });
+
+Vue.component("nav-menu", NavMenu);
 
 const app = new Vue({
     el: "#app",
     router: router,
-    render: (h) => h(App),
+    render: h => h(App)
 });

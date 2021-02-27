@@ -1,42 +1,44 @@
 <template>
     <div>
-        <h2 class="text-center">Users List</h2>
-
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>E-mail</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="user in users" :key="user.id">
-                    <td>{{ user.id }}</td>
-                    <td>{{ user.name }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>
-                        <div class="btn-group" role="group">
-                            <router-link
-                                :to="{
-                                    name: 'edit',
-                                    params: { id: user.id }
-                                }"
-                                class="btn btn-success"
-                                >Edit</router-link
-                            >
-                            <button
-                                class="btn btn-danger"
-                                @click="deleteUser(user.id)"
-                            >
-                                Delete
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <nav-menu />
+        <div class="container">
+            <h2 class="text-center">Users List</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>E-mail</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="user in users" :key="user.id">
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <router-link
+                                    :to="{
+                                        name: 'edit',
+                                        params: { id: user.id }
+                                    }"
+                                    class="btn btn-success"
+                                    >Edit</router-link
+                                >
+                                <button
+                                    class="btn btn-danger"
+                                    @click="deleteUser(user.id)"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </template>
 

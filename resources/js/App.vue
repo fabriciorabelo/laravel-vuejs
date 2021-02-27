@@ -1,24 +1,5 @@
 <template>
-    <div>
-        <div class="container" v-if="token && !expiredToken()">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <div class="collapse navbar-collapse">
-                    <div class="navbar-nav">
-                        <router-link to="/" class="nav-item nav-link"
-                            >Users List</router-link
-                        >
-                        <router-link to="/create" class="nav-item nav-link"
-                            >Create User</router-link
-                        >
-                    </div>
-                </div>
-            </nav>
-            <router-view> </router-view>
-        </div>
-        <div v-if="!token || expiredToken()">
-            <router-view> </router-view>
-        </div>
-    </div>
+    <router-view> </router-view>
 </template>
 
 <script>
@@ -29,6 +10,30 @@ export default {
         };
     },
     methods: {
+        async logout() {
+            await this.axios
+                .post(
+                    `http://localhost:8000/api/auth/logout`,
+                    {},
+                    {
+                        headers: {
+                            Authorization: `Bearer ${this.token}`
+                        }
+                    }
+                )
+                .then(res => {
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("user");
+                    this.$router.push("/login");
+                })
+                .catch(error => {
+                    if (error.response.data.message) {
+                        alert(error.response.data.message);
+                    } else {
+                        alert(error.message);
+                    }
+                });
+        },
         expiredToken() {
             // you will get a true / false response
             // true  -> if the token is already expired
