@@ -92,6 +92,8 @@ export default {
                             message += `${value}\n`;
                         }
                         alert(message);
+                    } else if (error.response.data.message) {
+                        alert(error.response.data.message);
                     } else {
                         alert(error.message);
                     }

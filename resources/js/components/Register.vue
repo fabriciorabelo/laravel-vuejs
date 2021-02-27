@@ -1,5 +1,5 @@
 <template>
-    <form class="form-signin" @submit.prevent="login()">
+    <form class="form-signup" @submit.prevent="register()">
         <img
             class="mb-4"
             src="https://getbootstrap.com/docs/4.6/assets/brand/bootstrap-solid.svg"
@@ -7,7 +7,17 @@
             width="72"
             height="72"
         />
-        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+        <h1 class="h3 mb-3 font-weight-normal">Register</h1>
+        <label for="inputName" class="sr-only">Name</label>
+        <input
+            type="text"
+            id="inputName"
+            class="form-control"
+            placeholder="Name"
+            v-model="user.name"
+            required
+            autofocus
+        />
         <label for="inputEmail" class="sr-only">Email</label>
         <input
             type="email"
@@ -16,7 +26,6 @@
             placeholder="Email"
             v-model="user.email"
             required
-            autofocus
         />
         <label for="inputPassword" class="sr-only">Password</label>
         <input
@@ -27,11 +36,22 @@
             v-model="user.password"
             required
         />
+        <label for="inputPasswordConfirmation" class="sr-only"
+            >Password Confirmation</label
+        >
+        <input
+            type="password"
+            id="inputPasswordConfirmation"
+            class="form-control"
+            placeholder="Password Confirmation"
+            v-model="user.password_confirmation"
+            required
+        />
         <button class="btn btn-lg btn-primary btn-block" type="submit">
-            Sign in
+            Register
         </button>
         <div class="mt-5 mb-5">
-            <a href="#" v-on:click="$router.push('/register')">Register</a>
+            <a href="#" v-on:click="$router.push('/login')">Login</a>
         </div>
         <p class="mt-5 mb-3 text-muted">&copy; 2021</p>
     </form>
@@ -42,22 +62,30 @@ export default {
     data() {
         return {
             user: {
+                name: "",
                 email: "",
-                password: ""
+                password: "",
+                password_confirmation: ""
             }
         };
     },
     methods: {
-        async login() {
+        async register() {
+            if (this.user.password_confirmation !== this.user.password) {
+                alert("Password does not match.");
+                return;
+            }
+
             await this.axios
-                .post("http://localhost:8000/api/auth/login", {
+                .post("http://localhost:8000/api/auth/register", {
+                    name: this.user.email.trim(),
                     email: this.user.email.trim().toLowerCase(),
-                    password: this.user.password.trim()
+                    password: this.user.password.trim(),
+                    password_confirmation: this.user.password_confirmation.trim()
                 })
                 .then(res => {
-                    localStorage.setItem("token", res.data.access_token);
-                    localStorage.setItem("user", JSON.stringify(res.data.user));
-                    this.$router.push("/");
+                    alert("User registered successfully!");
+                    this.$router.push("/login");
                 })
                 .catch(error => {
                     if (error.response.data.errors) {
@@ -86,10 +114,10 @@ export default {
         }
     },
     mounted() {
-        this.toggleBodyClass("addClass", "body-signin");
+        this.toggleBodyClass("addClass", "body-signup");
     },
     destroyed() {
-        this.toggleBodyClass("removeClass", "body-signin");
+        this.toggleBodyClass("removeClass", "body-signup");
     }
 };
 </script>

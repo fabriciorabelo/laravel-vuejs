@@ -1,4 +1,5 @@
 import Login from "./components/Login.vue";
+import Register from "./components/Register.vue";
 import AllUser from "./components/AllUser.vue";
 import CreateUser from "./components/CreateUser.vue";
 import EditUser from "./components/EditUser.vue";
@@ -12,6 +13,11 @@ const routes = [
         name: "login",
         path: "/login",
         component: Login
+    },
+    {
+        name: "register",
+        path: "/register",
+        component: Register
     },
     {
         name: "home",

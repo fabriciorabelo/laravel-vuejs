@@ -61,7 +61,15 @@ export default {
                 this.users = response.data;
             })
             .catch(error => {
-                if (error.response.data.message) {
+                if (error.response.data.errors) {
+                    let message = "Some errors has occurred:\n\n";
+                    for (const [key, value] of Object.entries(
+                        error.response.data.errors
+                    )) {
+                        message += `${value}\n`;
+                    }
+                    alert(message);
+                } else if (error.response.data.message) {
                     alert(error.response.data.message);
                 } else {
                     alert(error.message);
