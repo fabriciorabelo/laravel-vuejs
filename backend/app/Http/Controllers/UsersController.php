@@ -4,13 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\PaginatedUsers;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
 {
-    public User $user;
-
     /**
      * Create a new AuthController instance.
      *
@@ -19,45 +18,103 @@ class UsersController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
-        $this->user = new User();
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *     tags={"Users"},
+     *     operationId="Get users",
+     *     description="Return a paginated list of users.",
+     *     path="/api/users",
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         required=false,
+     *         description="Number of the current page.",
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=1,
+     *             minimum=1
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         required=false,
+     *         description="Number of the records to display.",
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=25,
+     *             minimum=1,
+     *             maximum=100
+     *         )
+     *     ),
+     *     @OA\Response(
+     *      response="400",
+     *      description="Bad request"
+     *     ),
+     *     @OA\Response(
+     *      response="401",
+     *      description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *      response="200",
+     *      description="Ok",
+     *      @OA\JsonContent(ref="#/components/schemas/paginatedUsers")
+     *     ),
+     * )
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = $this->user->paginate(100);
-        return response()->json($users);
+        if (!auth()->user()->hasPermissionTo('users.list')) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $users = User::whereNotNull('id');
+        return response()->json(new PaginatedUsers($users, (int) $request->input('per_page')));
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\CreateUserRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(CreateUserRequest $request)
-    {
-        $data = $request->only(['name', 'email', 'password']);
-        $data['password'] = bcrypt($data['password']);
-
-        $user = $this->user->create($data);
-
-        return response()->json($user, 201);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *     tags={"Users"},
+     *     operationId="Get user",
+     *     description="Get user data by id.",
+     *     path="/api/users/{id}",
+     *     @OA\Parameter(
+     *       name="id",
+     *       in="path",
+     *       description="ID of user that needs to be fetched",
+     *       required=true,
+     *       @OA\Schema(
+     *         type="integer",
+     *       )
+     *     ),
+     *     @OA\Response(
+     *      response="401",
+     *      description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *      response="404",
+     *      description="User not found"
+     *     ),
+     *     @OA\Response(
+     *      response="422",
+     *      description="Unprocessable Entity"
+     *     ),
+     *     @OA\Response(
+     *      response="200",
+     *      description="Ok",
+     *      @OA\JsonContent(ref="#/components/schemas/user")
+     *     ),
+     * )
      */
     public function show(int $id)
     {
-        $user = $this->user->find($id);
+        if (!auth()->user()->hasPermissionTo('users.view')) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $user = User::find($id);
         if (!$user) {
             return response()->json(['message' =>'User not found.'], 404);
         }
@@ -66,15 +123,89 @@ class UsersController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateUserRequest  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @OA\Post(
+     *     tags={"Users"},
+     *     operationId="Create user",
+     *     description="Register a new user.",
+     *     path="/api/users",
+     *     @OA\RequestBody(
+     *      description="User data",
+     *      required=true,
+     *      @OA\JsonContent(ref="#/components/schemas/userDto")
+     *     ),
+     *     @OA\Response(
+     *      response="400",
+     *      description="Bad request"
+     *     ),
+     *     @OA\Response(
+     *      response="401",
+     *      description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *      response="422",
+     *      description="Unprocessable Entity"
+     *     ),
+     *     @OA\Response(
+     *      response="200",
+     *      description="Ok",
+     *      @OA\JsonContent(ref="#/components/schemas/user")
+     *     ),
+     * )
+     */
+    public function store(CreateUserRequest $request)
+    {
+        if (!auth()->user()->hasPermissionTo('users.create')) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $data = $request->only(['name', 'email', 'password']);
+        $data['password'] = bcrypt($data['password']);
+
+        $user = User::create($data);
+        if (!$user) {
+            return response()->json(['Error while create user.'], 400);
+        }
+
+        return response()->json($user, 201);
+    }
+
+    /**
+     * @OA\Put(
+     *     tags={"Users"},
+     *     operationId="Update user",
+     *     description="Update an user.",
+     *     path="/api/users/{id}",
+     *     @OA\RequestBody(
+     *      description="User data",
+     *      required=true,
+     *      @OA\JsonContent(ref="#/components/schemas/userDto")
+     *     ),
+     *     @OA\Response(
+     *      response="400",
+     *      description="Bad request"
+     *     ),
+     *     @OA\Response(
+     *      response="401",
+     *      description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *      response="422",
+     *      description="Unprocessable Entity"
+     *     ),
+     *     @OA\Response(
+     *      response="200",
+     *      description="Ok",
+     *      @OA\JsonContent(ref="#/components/schemas/user")
+     *     ),
+     * )
      */
     public function update(UpdateUserRequest $request, int $id)
     {
-        $user = $this->user->find($id);
+        if (!auth()->user()->hasPermissionTo('users.update')) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $user = User::find($id);
         if (!$user) {
             return response()->json(['message' =>'User not found.'], 404);
         }
@@ -94,14 +225,42 @@ class UsersController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @OA\Delete(
+     *     tags={"Users"},
+     *     operationId="Delete user",
+     *     description="Delete user data by id.",
+     *     path="/api/users/{id}",
+     *     @OA\Parameter(
+     *       name="id",
+     *       in="path",
+     *       description="ID of user that needs to be fetched",
+     *       required=true,
+     *       @OA\Schema(
+     *         type="integer",
+     *       )
+     *     ),
+     *     @OA\Response(
+     *      response="404",
+     *      description="User not found"
+     *     ),
+     *     @OA\Response(
+     *      response="401",
+     *      description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *      response="200",
+     *      description="Ok",
+     *      @OA\JsonContent(ref="#/components/schemas/user")
+     *     ),
+     * )
      */
     public function destroy(int $id)
     {
-        $user = $this->user->find($id);
+        if (!auth()->user()->hasPermissionTo('users.delete')) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $user = User::find($id);
         if (!$user) {
             return response()->json(['message' =>'User not found.'], 404);
         }

@@ -20,15 +20,33 @@ class AuthController extends Controller
     }
 
     /**
-     * Get a JWT via given credentials.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Post(
+     *     tags={"Auth"},
+     *     operationId="Login",
+     *     description="Get JWT user token.",
+     *     path="/api/auth/login",
+     *     @OA\RequestBody(
+     *      description="User credentials",
+     *      required=true,
+     *      @OA\JsonContent(ref="#/components/schemas/loginDto")
+     *     ),
+     *     @OA\Response(
+     *      response="401",
+     *      description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *      response="200",
+     *      description="Ok",
+     *      @OA\JsonContent(ref="#/components/schemas/tokenDto")
+     *     ),
+     * )
      */
     public function login(LoginRequest $request)
     {
         $credentials = [
             'email' => $request->input('email'),
             'password' => $request->input('password'),
+            'is_activated' => true
         ];
 
         if (! $token = auth()->attempt($credentials)) {
@@ -39,9 +57,26 @@ class AuthController extends Controller
     }
 
     /**
-     * Register credentials.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Post(
+     *     tags={"Auth"},
+     *     operationId="Register",
+     *     description="Register a user user.",
+     *     path="/api/auth/register",
+     *     @OA\RequestBody(
+     *      description="User data",
+     *      required=true,
+     *      @OA\JsonContent(ref="#/components/schemas/registerDto")
+     *     ),
+     *     @OA\Response(
+     *      response="400",
+     *      description="Bad request"
+     *     ),
+     *     @OA\Response(
+     *      response="200",
+     *      description="Ok",
+     *      @OA\JsonContent(ref="#/components/schemas/user")
+     *     ),
+     * )
      */
     public function register(RegisterRequest $request)
     {
@@ -51,21 +86,35 @@ class AuthController extends Controller
             'password' => bcrypt($request->input('password')),
         ];
 
-        if (User::where('email', $data['email'])->count())
+        if (User::where('email', $data['email'])->count()) {
             return response()->json(['message' => 'E-mail aready been taken.'], 400);
+        }
 
         $user = User::create($data);
 
-        if (! $user )
+        if (! $user) {
             return response()->json(['message' => 'Bad request'], 400);
+        }
 
         return response()->json($user);
     }
 
     /**
-     * Get the authenticated User.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Post(
+     *     tags={"Auth"},
+     *     operationId="Me",
+     *     description="Get authenticated user data.",
+     *     path="/api/auth/me",
+     *     @OA\Response(
+     *      response="401",
+     *      description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *      response="200",
+     *      description="Ok",
+     *      @OA\JsonContent(ref="#/components/schemas/user")
+     *     ),
+     * )
      */
     public function me()
     {
@@ -73,9 +122,17 @@ class AuthController extends Controller
     }
 
     /**
-     * Log the user out (Invalidate the token).
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Post(
+     *     tags={"Auth"},
+     *     operationId="Logout",
+     *     description="Destroy current user session.",
+     *     path="/api/auth/logout",
+     *     @OA\Response(
+     *      response="200",
+     *      description="Ok",
+     *      @OA\JsonContent(ref="#/components/schemas/errorDto")
+     *     ),
+     * )
      */
     public function logout()
     {
@@ -85,9 +142,17 @@ class AuthController extends Controller
     }
 
     /**
-     * Refresh a token.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Post(
+     *     tags={"Auth"},
+     *     operationId="Refresh",
+     *     description="Refresh authenticated session.",
+     *     path="/api/auth/refresh",
+     *     @OA\Response(
+     *      response="200",
+     *      description="Ok",
+     *      @OA\JsonContent(ref="#/components/schemas/tokenDto")
+     *     ),
+     * )
      */
     public function refresh()
     {
@@ -106,7 +171,8 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            'user' => auth()->getUser(),
         ]);
     }
 }

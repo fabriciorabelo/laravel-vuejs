@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\APIController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,3 +13,10 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/', [APIController::class, 'swagger'])
+    ->name('swagger');
+Route::get('/redoc', [APIController::class, 'redoc'])
+    ->name('redoc');
+Route::get('/swagger.json', [APIController::class, 'json'])
+    ->name('swagger.json');
