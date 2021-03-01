@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Domains\Users\UsersRepository;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use App\Models\PaginatedUsers;
-use App\Models\User;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
 {
+    protected $repository;
+
     /**
      * Create a new AuthController instance.
      *
@@ -18,6 +19,7 @@ class UsersController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
+        $this->repository = new UsersRepository();
     }
 
     /**
@@ -48,8 +50,7 @@ class UsersController extends Controller
         //     return response()->json(['message' => 'Unauthorized'], 401);
         // }
 
-        $users = User::all();
-        return response()->json($users);
+        return response()->json($this->repository->getUsers());
     }
 
     /**
@@ -92,7 +93,7 @@ class UsersController extends Controller
         //     return response()->json(['message' => 'Unauthorized'], 401);
         // }
 
-        $user = User::find($id);
+        $user = $this->repository->getUserById($id);
         if (!$user) {
             return response()->json(['message' =>'User not found.'], 404);
         }
@@ -139,7 +140,7 @@ class UsersController extends Controller
         $data = $request->only(['name', 'email', 'password']);
         $data['password'] = bcrypt($data['password']);
 
-        $user = User::create($data);
+        $user = $this->repository->createUser($data);
         if (!$user) {
             return response()->json(['Error while create user.'], 400);
         }
@@ -183,7 +184,7 @@ class UsersController extends Controller
         //     return response()->json(['message' => 'Unauthorized'], 401);
         // }
 
-        $user = User::find($id);
+        $user = $this->repository->getUserById($id, false);
         if (!$user) {
             return response()->json(['message' =>'User not found.'], 404);
         }
@@ -197,9 +198,7 @@ class UsersController extends Controller
             $data['password'] = bcrypt($data['password']);
         }
 
-        $user->update($data);
-
-        return response()->json($user);
+        return response()->json($this->repository->updateUser($id, $data));
     }
 
     /**
@@ -238,7 +237,7 @@ class UsersController extends Controller
         //     return response()->json(['message' => 'Unauthorized'], 401);
         // }
 
-        $user = User::find($id);
+        $user = $this->repository->getUserById($id, false);
         if (!$user) {
             return response()->json(['message' =>'User not found.'], 404);
         }
@@ -247,7 +246,7 @@ class UsersController extends Controller
             return response()->json(['message' =>'You can not delete youself.'], 400);
         }
 
-        if ($user->delete()) {
+        if ($this->repository->deleteUser($id)) {
             return response()->json(['message' =>'User deleted.']);
         }
 

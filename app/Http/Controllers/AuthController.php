@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Domains\Users\UsersRepository;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Models\User;
-use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
+    protected $repository;
+
      /**
      * Create a new AuthController instance.
      *
@@ -17,6 +18,7 @@ class AuthController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->repository = new UsersRepository();
     }
 
     /**
@@ -87,11 +89,11 @@ class AuthController extends Controller
             'is_activated' => true,
         ];
 
-        if (User::where('email', $data['email'])->count()) {
+        if ($this->repository->checkIfuserExists($data['email'])) {
             return response()->json(['message' => 'E-mail aready been taken.'], 400);
         }
 
-        $user = User::create($data);
+        $user = $this->repository->createUser($data);
 
         if (! $user) {
             return response()->json(['message' => 'Bad request'], 400);
